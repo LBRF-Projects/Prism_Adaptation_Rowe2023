@@ -32,6 +32,12 @@ data_cols = [
 # Trigger port for PLATO goggles
 port = get_trigger_port()
 
+# Indicates trial start for EMG collection
+port.add_codes({
+    'trial_start': 2,
+    'circle_on': 4,
+    'trial_end': 8
+})
 
 # Initialize and create the experiment window
 viewingDistance = 100
@@ -239,7 +245,7 @@ def get_participant_info():
             break
 
     # Create dictionary with participant info
-    
+
     if participant_id.lower() != 'test':
         while True:
             sex = get_input('Sex (m or f): ') 
@@ -288,10 +294,10 @@ def get_participant_info():
     return info
 
 def open_goggles():
-    port._write_trigger(0)
+    port._write_trigger(0, port = 'FIO')
 
 def close_goggles():
-    port._write_trigger(3)
+    port._write_trigger(3, port = 'FIO')
 
 def run_trial(block, group, participant_info):
     """Parameters for different trial types of a reach and point task
@@ -322,6 +328,7 @@ def run_trial(block, group, participant_info):
     #display black screen
     renderer.clear(black)
     renderer.present()
+    port.send('trial_start')
 
     # PLATO goggles open
     port._write_trigger(0)
@@ -350,6 +357,7 @@ def run_trial(block, group, participant_info):
     location = random.choice(loc_opt)
     renderer.rcopy(tx, loc= location, align = (0.5, 0.5)) #show stimuli at one of 3 random locations
     renderer.present()
+    port.send('circle_on')
     start_time = time.perf_counter() # Grabs start time to measure reaction time
     events = pump()        
 
@@ -461,6 +469,7 @@ def run_trial(block, group, participant_info):
     get_events()
     renderer.clear(black) 
     renderer.present()
+    port.send('trial_end')
     time.sleep(0.25) # Wait 250 ms before opening goggles
     open_goggles()
     return data

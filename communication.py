@@ -2,7 +2,7 @@ import time
 from importlib.util import find_spec
 
 
-labjack_port = 'FIO'
+labjack_port = 'EIO'
 
 LABJACK_REGISTERS = {
     'FIO': 6700,
@@ -16,13 +16,6 @@ def _package_available(name):
         return find_spec(name) != None
     except (ValueError, ImportError):
         return False
-
-
-def _raise_err(task, msg=None):
-    e = "Error encountered {0}".format(task)
-    if msg:
-        e += ": {0}".format(msg)
-    raise RuntimeError(e)
 
 
 def _check_labjack_driver():
@@ -140,7 +133,7 @@ class TriggerPort(object):
         """
         pass
 
-    def _write_trigger(self, value):
+    def _write_trigger(self, value, port = None):
         # Device-specific trigger code implementation. This actually sends a
         # given code to the hardware.
         pass
@@ -160,9 +153,14 @@ class U3Port(TriggerPort):
             CIODirection=255, CIOState=0,
         )
 
-    def _write_trigger(self, value):
+    def _write_trigger(self, value, port = None):
+        port_reg = self._write_reg
+        if port:
+            port_reg = LABJACK_REGISTERS[port]
+
         # Fast method from Appelhoff & Stenner (2021), may be erratic on Windows
-        self._device.writeRegister(self._write_reg, 0xFF00 + (value & 0xFF))
+        self._device.writeRegister(port_reg, 0xFF00 + (value & 0xFF))
+
 
     def close(self):
         # Needs to be called on Linux and macOS in order for the LabJack to be

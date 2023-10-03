@@ -237,7 +237,7 @@ def get_participant_info():
         folder = '_Data'
         sub_folders = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder,name))] # Grabs all the folder names in the folder _Data
         # Raises message if subject folder already exists
-        if (participant_id in sub_folders) and participant_id != 'test':
+        if (participant_id in sub_folders) and participant_id.lower() != 'test':
             show_message('This file already exists\nPlease input new participant code\nPress Enter to continue', lockWait = True)
             continue
         else: 
@@ -335,6 +335,7 @@ def run_trial(block, group, participant_info):
 
     # Initialize trial data
     data = participant_info.copy()
+    data['reaction_time'] = nan
     
     while True: 
         events = pump()
@@ -347,12 +348,11 @@ def run_trial(block, group, participant_info):
             # Error message "too fast" is displayed
             if key_pressed(events, key = 'space', released = True ):
                 show_message("Too fast!\nPress Enter to try again", lockWait = True)
+                get_events()
                 continue
-            get_events()
             break
 
     # Shows circle stimuli on the renderer
-    get_events() 
     renderer.clear(black)
     location = random.choice(loc_opt)
     renderer.rcopy(tx, loc= location, align = (0.5, 0.5)) #show stimuli at one of 3 random locations
@@ -399,7 +399,7 @@ def run_trial(block, group, participant_info):
 
             # Grabs reaction time. 
             # Time from when stimulus is presented to time when finger released from button
-            reaction_time = nan
+            reaction_time = None
 
             if key_pressed(events, key = 'space', released = True): 
                 reaction_time = (time.perf_counter() - start_time)*1000 
@@ -438,7 +438,7 @@ def run_trial(block, group, participant_info):
 
             # Grabs reaction time. 
             # Time from when stimulus is presented to time when finger released from button
-            reaction_time = nan
+            reaction_time = None
             if key_pressed(events, key = 'space', released = True): 
                 reaction_time = (time.perf_counter() - start_time)*1000 
                 data.update({
@@ -501,11 +501,11 @@ def run_block(block, group, participant_info, df):
     """
     
     if block == "Familiarization":
-        trial_num = 2
+        trial_num = 40
     elif block in ["Baseline", "PostTest"]:
-        trial_num = 2
+        trial_num = 10
     elif block == "Exposure":
-        trial_num = 2 #repeat 10 times (total 250 trials)
+        trial_num = 25 #repeat 10 times (total 250 trials)
     trials = 0
     start_time = time.time()
     for i in range(trial_num):
@@ -585,7 +585,7 @@ def run():
     elif group == 'CTRL':
         show_message(instructions["Exposure_CTRL"], lockWait = True)
 
-    numTestingBlocks = 2
+    numTestingBlocks = 10
     for blockNum in range(numTestingBlocks):
         run_block(block = 'Exposure', group = group, participant_info = participant_info, df = df['Data'])
         if blockNum < (numTestingBlocks- 1 ):

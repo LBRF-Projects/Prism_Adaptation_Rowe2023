@@ -13,7 +13,7 @@ instructions['Familiarization'] = [
     "",
     "Press the spacebar again to initiate the next trial.",
     "",
-    "When you are ready to begin, please press the return key."
+    "When you are ready to begin, please press the enter key."
 ]
 
 instructions['get_study_investigator'] = [
@@ -33,7 +33,7 @@ instructions['Baseline'] = [
     "",
     "This time, your vision will be blocked during the movement trajectory",
     "",
-    "When you are ready to begin, please press the return key."
+    "When you are ready to begin, please press the enter key."
 ]
 
 instructions['Exposure_PP'] = [
@@ -43,7 +43,7 @@ instructions['Exposure_PP'] = [
     "",
     "When you see the red dot appear, reach and point to it as quickly and accurately as possible",
     "",
-    "When you are ready to begin, please press the return key."
+    "When you are ready to begin, please press the enter key."
 ]
 
 instructions['Exposure_CTRL'] = [
@@ -56,7 +56,7 @@ instructions['Exposure_CTRL'] = [
     "",
     "KEEP THE SPACEBAR PRESSED until you have completed imagining drawing the line.",
     "",
-    "When you are ready to begin, please press the return key."
+    "When you are ready to begin, please press the enter key."
 ]
 
 instructions['Exposure_MI'] = [
@@ -69,7 +69,7 @@ instructions['Exposure_MI'] = [
     "",
     "KEEP THE SPACEBAR PRESSED until you have completed the imagined the reach and point",
     "",
-    "When you are ready to begin, please press the return key."
+    "When you are ready to begin, please press the enter key."
 ]
 
 instructions['PostTest'] = [
@@ -81,7 +81,7 @@ instructions['PostTest'] = [
     "",
     "This time, your vision will be blocked during the movement trajectory",
     "",
-    "When you are ready to begin, please press the return key."
+    "When you are ready to begin, please press the enter key."
 ]
 
 instructions['done'] = [

@@ -137,7 +137,7 @@ def draw_circle(radius, fill = None, stroke = None):
     surf = sdl2.ext.pillow_to_surface(img)
     return surf
 
-def get_radius(size = 10, screensize = 13.5):
+def get_radius(size = 10, screensize = 24):
     """Determines the radius of the circle needed to create a 10 mm circle
 
     mm to inches and inches to pixels
@@ -162,7 +162,7 @@ def get_radius(size = 10, screensize = 13.5):
     radius = ((size/10)*(1/2.54)*(display_d/screensize))/2 
     return radius
 
-def get_mm(pixels, screensize = 13.5):
+def get_mm(pixels, screensize = 24):
     """Converts pixels to mm for a 13.5 inch screen
 
     Parameters

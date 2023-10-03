@@ -277,12 +277,12 @@ def get_participant_info():
                 continue
         
         while True:
-            group = get_input('Group (PP20, PP-MI, PP-CTRL): ') 
-            if group in ["PP20", "PP-MI", "PP-CTRL"]:
+            group = get_input('Group (PP50, PP-MI, PP-CTRL, PP-None): ') 
+            if group in ["PP50", "PP-MI", "PP-CTRL", "PP-None"]:
                 info['group'] = group
                 break
             else:
-                show_message('Error!\Please input PP, MI-CE, MI-TE, or CTRL\nPress Enter to continue', lockWait = True)
+                show_message('Error!\nPlease input PP50, PP-MI, PP-CTRL, PP-None\nPress Enter to continue', lockWait = True)
                 continue
 
     else:
@@ -482,6 +482,7 @@ def run_block(block, group, participant_info, df):
     Baseline: 10 trials
     PPExposure: 20 trials
     Exposure: 230 trials
+    PP50Exposure: 250 trials
     PostTest: 10 trials
 
     Parameters
@@ -491,10 +492,10 @@ def run_block(block, group, participant_info, df):
         Exposure, and PostTest. 
     group: str
         The group type of the participant being run. These include:
-        PP: Physical practice
-        MI-CE: Motor imagery concurrent exposure
-        MI-TE: Motor imagery terminal exposure
-        CTRL: Control
+        PP50: Physical practice with 50 post-test trials
+        PP-MI: Phyiscal Practice then Motor Imagery
+        PP-CTRL: Physical Practice then control
+        PP-None: Only 20 PP exposure trials
     participant_info: dict
         A dictionary containing participant info
     df: Datafile obj
@@ -502,13 +503,17 @@ def run_block(block, group, participant_info, df):
     """
     
     if block == "Familiarization":
-        trial_num = 2
-    elif block in ["Baseline", "PostTest"]:
-        trial_num = 2
-    elif block == "Exposure":
-        trial_num = 2 #repeat 10 times (total 250 trials)
+        trial_num = 40
+    elif block == "Baseline":
+        trial_num = 10
+    elif block == "PP50Exposure":
+        trial_num = 25 #repeat 10 time (total 250 trials) 
     elif block == "PPExposure":
-        trial_num = 2 
+        trial_num = 20
+    elif block == "Exposure":
+        trial_num = 23 #repeat 10 times (total 230 trials)
+    elif block == "PostTest":
+        trial_num = 50
     trials = 0
     start_time = time.time()
     for i in range(trial_num):
@@ -581,27 +586,35 @@ def run():
     show_message(instructions["get_study_investigator"], lockWait = True)
 
     # PP Exposure block
-    show_message(instructions["Exposure_PP"], lockWait = True)
-    run_block(block = 'PPExposure', group = group, participant_info = participant_info, df = df['Data'])
+    if group in ("PP-None", "PP-MI", "PP-CTRL"): # Completing 20 PP trials
+        show_message(instructions["Exposure_PP"], lockWait = True)
+        run_block(block = 'PPExposure', group = group, participant_info = participant_info, df = df['Data'])
+    else: # Completing 250 PP trials
+        show_message(instructions["Exposure_PP"], lockWait = True)
+        numTestingBlocks = 10
+        for blockNum in range(numTestingBlocks):
+            run_block(block = 'PP50Exposure', group = group, participant_info = participant_info, df = df['Data'])
+            if blockNum < (numTestingBlocks- 1 ):
+                show_message('Take a break!\nTo resume, press enter.', lockWait = True)
 
     # Break, study investigator swaps glasses/goggles/prisms
     show_message(instructions["get_study_investigator"], lockWait = True)
 
     # Exposure block
-    if group == 'PP20':
+    if group in ("PP-None", "PP50"):
             show_message(instructions["PostTest"], lockWait = True)
     elif group == 'PP-MI':
         show_message(instructions["Exposure_MI"], lockWait = True)
     elif group == 'PP-CTRL':
         show_message(instructions["Exposure_CTRL"], lockWait = True)
 
-    if group in ['PP-MI', 'PP-CTRL']:
-        numTestingBlocks = 2
+    if group in ['PP-MI', 'PP-CTRL']: # Completing 230 trials of either MI or CTRL
+        numTestingBlocks = 10
         for blockNum in range(numTestingBlocks):
             run_block(block = 'Exposure', group = group, participant_info = participant_info, df = df['Data'])
             if blockNum < (numTestingBlocks- 1 ):
-                show_message('Take a break!\nTo resume, press return.', lockWait = True)
-    else:
+                show_message('Take a break!\nTo resume, press enter.', lockWait = True)
+    else: # Going straight to Post-Test
         run_block(block = 'PostTest', group = group, participant_info = participant_info, df = df['Data'])
         show_message(instructions["done"], lockWait = True)
         sys.exit()

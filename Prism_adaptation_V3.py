@@ -277,8 +277,8 @@ def get_participant_info():
                 continue
         
         while True:
-            group = get_input('Group (PP50, PP-MI, PP-CTRL, PP-None): ') 
-            if group in ["PP50", "PP-MI", "PP-CTRL", "PP-None"]:
+            group = get_input('Group (PP-MI-Pre, PP-CTRL-Pre): ') 
+            if group in ["PP-MI-Pre", "PP-CTRL-Pre"]:
                 info['group'] = group
                 break
             else:
@@ -312,10 +312,8 @@ def run_trial(block, group, participant_info):
         Exposure, and PostTest. 
     group: str
         The group type of the participant being run. These include:
-        PP-MI: Physical practice before MI
-        PP-CTRL: Physical Practice before CTRL
-        PP-None: 20 trials of Physical Practice
-        PP50: Normal PP with 50 post-test trials 
+        PP-MI-Pre: PP prior to MI with pre testing block
+        PP-CTRL-Pre: PP prior to CTRL with pre testing block
     participant_info: dict
         A dictionary containing participant info
     
@@ -367,7 +365,7 @@ def run_trial(block, group, participant_info):
 
     # Gathers response time for motor imagery and control groups
     response_time = None
-    if ((block == "Exposure") and group in ["PP-MI", "PP-CTRL"]):
+    if ((block == "Exposure") and group in ["PP-MI-Pre", "PP-CTRL-Pre"]):
         while not response_time:
             events = pump()
             check_for_quit(events)
@@ -391,7 +389,7 @@ def run_trial(block, group, participant_info):
         renderer.clear(black)
         renderer.present()
     
-    if block in ["Baseline", "PostTest"]:
+    if block in ["Baseline", "Pre", "PostTest"]:
         # Grabs distance x, distance y, response time, and reaction time during a physical practice trial
         while not response_time:
             events = pump()
@@ -431,7 +429,7 @@ def run_trial(block, group, participant_info):
                 }) 
 
     else:
-        # Grabs distance x, distance y, response time, and reaction time during a physical practice trial
+        # Grabs distance x, distance y, response time, and reaction time during a physical practice trial in familiarization
         while not response_time:
             events = pump()
             check_for_quit(events)
@@ -474,15 +472,14 @@ def run_trial(block, group, participant_info):
     open_goggles()
     return data
 
-
 def run_block(block, group, participant_info, df):
     """Defines the different blocks types
 
     Familiarization: 40 trials
     Baseline: 10 trials
     PPExposure: 20 trials
+    Pre: 10 trials 
     Exposure: 230 trials
-    PP50Exposure: 250 trials
     PostTest: 10 trials
 
     Parameters
@@ -506,10 +503,10 @@ def run_block(block, group, participant_info, df):
         trial_num = 40
     elif block == "Baseline":
         trial_num = 10
-    elif block == "PP50Exposure":
-        trial_num = 25 #repeat 10 time (total 250 trials) 
     elif block == "PPExposure":
         trial_num = 20
+    elif block == "Pre":
+        trial_num = 10
     elif block == "Exposure":
         trial_num = 23 #repeat 10 times (total 230 trials)
     elif block == "PostTest":
@@ -585,39 +582,34 @@ def run():
     # Break, study investigator swaps glasses/goggles/prisms
     show_message(instructions["get_study_investigator"], lockWait = True)
 
-    # PP Exposure block
-    if group in ("PP-None", "PP-MI", "PP-CTRL"): # Completing 20 PP trials
-        show_message(instructions["Exposure_PP"], lockWait = True)
-        run_block(block = 'PPExposure', group = group, participant_info = participant_info, df = df['Data'])
-    else: # Completing 250 PP trials
-        show_message(instructions["Exposure_PP"], lockWait = True)
-        numTestingBlocks = 10
-        for blockNum in range(numTestingBlocks):
-            run_block(block = 'PP50Exposure', group = group, participant_info = participant_info, df = df['Data'])
-            if blockNum < (numTestingBlocks- 1 ):
-                show_message('Take a break!\nTo resume, press enter.', lockWait = True)
+    
+    # Completing 20 PP trials
+    show_message(instructions["Exposure_PP"], lockWait = True)
+    run_block(block = 'PPExposure', group = group, participant_info = participant_info, df = df['Data'])
+
+    # Break, study investigator swaps glasses/goggles/prisms
+    show_message(instructions["get_study_investigator"], lockWait = True)
+
+    # Pre block
+    show_message(instructions["Pre"], lockWait = True)
+    run_block(block = 'Pre', group = group, participant_info = participant_info, df = df['Data'])
 
     # Break, study investigator swaps glasses/goggles/prisms
     show_message(instructions["get_study_investigator"], lockWait = True)
 
     # Exposure block
-    if group in ("PP-None", "PP50"):
-            show_message(instructions["PostTest"], lockWait = True)
-    elif group == 'PP-MI':
+    if group == 'PP-MI-Pre':
         show_message(instructions["Exposure_MI"], lockWait = True)
-    elif group == 'PP-CTRL':
+    elif group == 'PP-CTRL-Pre':
         show_message(instructions["Exposure_CTRL"], lockWait = True)
 
-    if group in ['PP-MI', 'PP-CTRL']: # Completing 230 trials of either MI or CTRL
-        numTestingBlocks = 10
-        for blockNum in range(numTestingBlocks):
-            run_block(block = 'Exposure', group = group, participant_info = participant_info, df = df['Data'])
-            if blockNum < (numTestingBlocks- 1 ):
-                show_message('Take a break!\nTo resume, press enter.', lockWait = True)
-    else: # Going straight to Post-Test
-        run_block(block = 'PostTest', group = group, participant_info = participant_info, df = df['Data'])
-        show_message(instructions["done"], lockWait = True)
-        sys.exit()
+    # Completing 230 trials of either MI or CTRL
+    numTestingBlocks = 10
+    for blockNum in range(numTestingBlocks):
+        run_block(block = 'Exposure', group = group, participant_info = participant_info, df = df['Data'])
+        if blockNum < (numTestingBlocks- 1 ):
+            show_message('Take a break!\nTo resume, press enter.', lockWait = True)
+
     
     # Break, study investigator swaps glasses/goggles/prisms
     show_message(instructions["get_study_investigator"], lockWait = True)
@@ -632,4 +624,3 @@ def run():
    
 if __name__ == "__main__":
     sys.exit(run())
-

@@ -46,6 +46,18 @@ instructions['Exposure_PP'] = [
     "When you are ready to begin, please press the enter key."
 ]
 
+instructions['Pre'] = [
+    "Your next task is the pre-test block.",
+    "",
+    "You will press and hold the spacebar to initiate each trial as before.",
+    "",
+    "When you see the red dot appear, reach and point to it as quickly and accurately as possible",
+    "",
+    "This time, your vision will be blocked during the movement trajectory",
+    "",
+    "When you are ready to begin, please press the enter key."
+]
+
 instructions['Exposure_CTRL'] = [
     "Your next task is the exposure block.",
     "",

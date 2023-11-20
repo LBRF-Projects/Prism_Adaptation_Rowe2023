@@ -312,10 +312,10 @@ def run_trial(block, group, participant_info):
         Exposure, and PostTest. 
     group: str
         The group type of the participant being run. These include:
-        PP: Physical practice
-        MI-CE: Motor imagery concurrent exposure
-        MI-TE: Motor imagery terminal exposure
-        CTRL: Control
+        PP-MI: Physical practice before MI
+        PP-CTRL: Physical Practice before CTRL
+        PP-None: 20 trials of Physical Practice
+        PP50: Normal PP with 50 post-test trials 
     participant_info: dict
         A dictionary containing participant info
     
@@ -633,6 +633,3 @@ def run():
 if __name__ == "__main__":
     sys.exit(run())
 
-# Things to do:
-# TTL with goggles
-# Add block num into exposure blocks # Do I need to do this? When divisible by 25, add an extra line that says block A

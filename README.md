@@ -60,4 +60,4 @@ Note that to run commands using this environment, you will need to prefix them w
 
 
 ### Running the experiment
-To run the experiment in the self-contained Pipenv environment run in the terminal ```pipenv run python prism_adaptation.py```.
+To run the experiment in the self-contained Pipenv environment, run in the terminal ```pipenv run python prism_adaptation.py```.

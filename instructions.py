@@ -79,7 +79,7 @@ instructions['Exposure_MI'] = [
     "When you see the red dot appear,",
     "vividly imagine yourself reaching and pointing to the center of the target.",
     "",
-    "KEEP THE SPACEBAR PRESSED until you have completed the imagined the reach and point",
+    "KEEP THE SPACEBAR PRESSED until you have completed the imagined reach and point",
     "",
     "When you are ready to begin, please press the enter key."
 ]
